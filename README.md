@@ -1,121 +1,121 @@
 # Weather, wherever
 
-Aplicação web para consultar as condições meteorológicas atuais de uma cidade, com uma interface responsiva e fundos que mudam consoante a temperatura. Desenvolvida com React e Vite, utiliza a Open-Meteo para obter dados sem necessidade de uma chave de API.
+A web app for checking a city's current weather, with a responsive interface and backgrounds that change with the temperature. Built with React and Vite, it uses Open-Meteo to retrieve weather data without an API key.
 
 ## Screenshots
 
-### Ecrã inicial
+### Initial screen
 
-Campo de pesquisa, sugestões de cidades e mensagem de apresentação antes da primeira consulta.
+Search field, suggested cities, and a welcome message before the first search.
 
-![Ecrã inicial da aplicação, com campo de pesquisa e fundo de montanhas cobertas de neve](docs/screenshots/estado-inicial.png)
+![Initial screen with a city search field and a snowy mountain background](docs/screenshots/estado-inicial.png)
 
-### Resultado de uma pesquisa
+### Search result
 
-Condições atuais em Lisboa, com temperatura, sensação térmica, humidade, vento e hora local da observação. Os valores apresentados são exemplos de uma captura e variam entre consultas.
+Current conditions in Lisbon, including temperature, feels-like temperature, humidity, wind speed, and the observation's local time. The values shown are examples captured at a particular moment and vary between searches.
 
-![Resultado da pesquisa por Lisboa, com as condições meteorológicas e os detalhes da observação](docs/screenshots/pesquisa-lisboa.png)
+![Lisbon search result showing current weather conditions and observation details](docs/screenshots/pesquisa-lisboa.png)
 
-## Funcionalidades
+## Features
 
-- **Pesquisa por cidade:** submissão através do botão Search ou da tecla Enter, com remoção dos espaços no início e no fim do texto.
-- **Condições atuais:** temperatura e sensação térmica em °C, humidade relativa em percentagem e velocidade do vento em km/h.
-- **Identificação da localização:** cidade, região e país devolvidos pelo serviço de geocodificação.
-- **Descrição do estado do tempo:** conversão dos códigos meteorológicos em descrições e ícones, incluindo chuva, neve, nevoeiro e trovoada.
-- **Data e hora locais:** apresentação da data e da hora da observação no fuso horário da cidade pesquisada.
-- **Fundos dinâmicos:** fotografia de ambiente quente para temperaturas superiores a 16 °C e fotografia de ambiente frio nos restantes casos, incluindo o estado inicial.
-- **Feedback durante a pesquisa:** indicador de carregamento e botão temporariamente desativado.
-- **Mensagens de erro:** validação de pesquisas demasiado curtas, cidades não encontradas, falhas de ligação, respostas inválidas e indisponibilidade do serviço.
-- **Limite de espera:** cancelamento de pesquisas que ultrapassem 15 segundos, permitindo tentar novamente.
-- **Preservação do último resultado:** uma pesquisa sem sucesso apresenta o erro e mantém as últimas condições obtidas.
-- **Interface responsiva e acessível:** adaptação a ecrãs pequenos, pesquisa por teclado, foco visível e mensagens identificadas para tecnologias de apoio.
+- **City search:** submit using the Search button or Enter key, with leading and trailing whitespace removed.
+- **Current conditions:** temperature and feels-like temperature in °C, relative humidity as a percentage, and wind speed in km/h.
+- **Location details:** city, region, and country returned by the geocoding service.
+- **Weather descriptions:** weather codes mapped to descriptions and icons, including rain, snow, fog, and thunderstorms.
+- **Local date and time:** observation date and time displayed in the searched city's timezone.
+- **Dynamic backgrounds:** a warm-weather photo for temperatures above 16 °C and a cold-weather photo otherwise, including the initial screen.
+- **Search feedback:** loading indicator and a temporarily disabled search button.
+- **Error messages:** handling for short queries, missing cities, connection failures, invalid responses, and service outages.
+- **Request timeout:** searches are canceled after 15 seconds, allowing the user to retry.
+- **Previous result preserved:** failed searches display an error while keeping the last successful weather result.
+- **Responsive, accessible interface:** small-screen layouts, keyboard search, visible focus indicators, and messages identified for assistive technologies.
 
-## Tecnologias
+## Technologies
 
-| Tecnologia | Utilização |
+| Technology | Purpose |
 | --- | --- |
-| React 17 e React DOM | Componentes funcionais e atualização da interface |
-| JavaScript com ES Modules | Organização e reutilização do código |
-| Vite 6 e plugin React | Servidor de desenvolvimento e build de produção |
-| CSS | Layout com Flexbox e Grid, fundos fotográficos e media queries |
-| Fetch API | Pedidos HTTP assíncronos aos serviços externos |
-| AbortController | Cancelamento de pedidos em curso |
-| Intl.DateTimeFormat | Formatação de datas e horas por fuso horário |
-| ESLint e regras de React Hooks | Análise estática do código |
-| node:test e node:assert/strict | Testes automatizados sem framework adicional |
+| React 17 and React DOM | Functional components and UI updates |
+| JavaScript with ES Modules | Code organization and reuse |
+| Vite 6 and the React plugin | Development server and production builds |
+| CSS | Flexbox and Grid layouts, photo backgrounds, and media queries |
+| Fetch API | Asynchronous HTTP requests to external services |
+| AbortController | Cancellation of active requests |
+| Intl.DateTimeFormat | Date and time formatting by timezone |
+| ESLint and React Hooks rules | Static code analysis |
+| node:test and node:assert/strict | Automated tests without an additional framework |
 
-## Implementações técnicas
+## Technical implementation
 
-### Separação de responsabilidades
+### Separation of concerns
 
-O formulário e o ciclo de pesquisa ficam em `App.jsx`. O componente `WeatherCard` recebe os dados já normalizados e apresenta as condições meteorológicas. Os pedidos às APIs e a validação das respostas ficam no serviço `weather.js`; a formatação das datas e a interpretação dos códigos meteorológicos ficam nos utilitários.
+`App.jsx` manages the form and search lifecycle. The `WeatherCard` component receives normalized data and displays weather conditions. The `weather.js` service handles API requests and response validation, while utility functions handle date formatting and weather-code descriptions.
 
-Esta organização permite testar a integração com os serviços e a formatação dos dados sem renderizar a interface.
+This structure allows service integration and data formatting to be tested without rendering the UI.
 
-### Integração com as APIs
+### API integration
 
-Cada pesquisa válida segue este fluxo:
+Each valid search follows this flow:
 
-1. Validar o nome da cidade, exigindo pelo menos dois caracteres após `trim()`.
-2. Consultar a API de geocodificação e selecionar o primeiro resultado.
-3. Utilizar a latitude e a longitude obtidas para consultar as condições meteorológicas atuais.
-4. Validar os campos numéricos e normalizar a resposta para o formato utilizado pela interface.
-5. Apresentar os dados e atualizar o fundo de acordo com a temperatura.
+1. Validate the city name, requiring at least two characters after `trim()`.
+2. Query the geocoding API and select the first result.
+3. Use the returned latitude and longitude to request current weather conditions.
+4. Validate numeric fields and normalize the response into the format used by the UI.
+5. Display the data and update the background based on the temperature.
 
-| Serviço | Endpoint | Finalidade |
+| Service | Endpoint | Purpose |
 | --- | --- | --- |
-| Open-Meteo Geocoding | `https://geocoding-api.open-meteo.com/v1/search` | Resolver o nome da cidade para coordenadas |
-| Open-Meteo Forecast | `https://api.open-meteo.com/v1/forecast` | Obter temperatura, sensação térmica, humidade, código meteorológico e vento |
+| Open-Meteo Geocoding | `https://geocoding-api.open-meteo.com/v1/search` | Resolve a city name to coordinates |
+| Open-Meteo Forecast | `https://api.open-meteo.com/v1/forecast` | Retrieve temperature, feels-like temperature, humidity, weather code, and wind speed |
 
-Os pedidos utilizam HTTPS. `URL` e `URLSearchParams` constroem os endereços e codificam os parâmetros, incluindo nomes com acentos ou caracteres especiais. As unidades são definidas explicitamente como Celsius e km/h.
+Requests use HTTPS. `URL` and `URLSearchParams` construct addresses and encode parameters, including names with accents or special characters. Units are explicitly set to Celsius and km/h.
 
-O serviço pede timestamps Unix e o fuso horário com `timezone=auto`. Converte os timestamps de segundos para milissegundos antes de os formatar com `Intl.DateTimeFormat`.
+The service requests Unix timestamps and the local timezone using `timezone=auto`. It converts timestamps from seconds to milliseconds before formatting them with `Intl.DateTimeFormat`.
 
-### Estado, cancelamento e limpeza
+### State, cancellation, and cleanup
 
-- `useState` gere o texto da pesquisa, o resultado, o carregamento e a mensagem de erro.
-- `useRef` mantém o controlador do pedido ativo e a referência do temporizador.
-- Uma nova pesquisa cancela o pedido anterior e limpa o respetivo temporizador.
-- O resultado de um pedido cancelado é ignorado, evitando que substitua uma pesquisa mais recente.
-- O temporizador cancela o pedido após 15 segundos e apresenta uma mensagem de espera excedida.
-- A função de limpeza de `useEffect` cancela o pedido e remove o temporizador quando o componente é desmontado.
+- `useState` manages the search text, result, loading state, and error message.
+- `useRef` stores the active request controller and timeout reference.
+- A new search cancels the previous request and clears its timeout.
+- Results from canceled requests are ignored so they cannot overwrite a more recent search.
+- The timeout cancels the request after 15 seconds and displays a timeout message.
+- The `useEffect` cleanup function cancels the request and clears the timeout when the component unmounts.
 
-### Validação e tratamento de erros
+### Validation and error handling
 
-O serviço distingue falhas de rede, respostas HTTP sem sucesso, JSON inválido, localizações inexistentes e dados meteorológicos incompletos. Os campos numéricos são verificados com `Number.isFinite`, evitando apresentar valores inválidos. Os cancelamentos preservam o tipo `AbortError`.
+The service distinguishes network failures, unsuccessful HTTP responses, invalid JSON, missing locations, and incomplete weather data. Numeric fields are checked with `Number.isFinite` to avoid displaying invalid values. Canceled requests preserve the `AbortError` type.
 
-### Acessibilidade e apresentação
+### Accessibility and presentation
 
-O formulário inclui uma etiqueta associada ao campo de pesquisa e permite submissão por teclado. As mensagens de erro usam `role="alert"`; a área de resultados utiliza `aria-live` e `aria-busy` para comunicar alterações e carregamento. Os ícones decorativos são ocultados das tecnologias de apoio.
+The form includes a label associated with the search field and supports keyboard submission. Error messages use `role="alert"`; the results area uses `aria-live` and `aria-busy` to communicate updates and loading state. Decorative icons are hidden from assistive technologies.
 
-O CSS utiliza uma largura máxima para o conteúdo, Flexbox no formulário, Grid nos detalhes meteorológicos e uma media query para ecrãs até 480 px. As imagens de fundo são assets locais incluídos no build.
+The CSS uses a maximum content width, Flexbox for the form, Grid for weather details, and a media query for screens up to 480 px wide. Background images are local assets included in the build.
 
-### Ferramentas de desenvolvimento
+### Development tools
 
-O Vite substitui a configuração original de Create React App. O projeto mantém React 17 e inclui um lockfile para instalação reproduzível com `npm ci`. Os testes utilizam o runner nativo do Node.js, sem dependências adicionais de teste.
+Vite replaces the original Create React App setup. The project retains React 17 and includes a lockfile for reproducible installation with `npm ci`. Tests use the built-in Node.js test runner without additional testing dependencies.
 
-## Estrutura do projeto
+## Project structure
 
 ```text
 weatherApp/
 ├── docs/
-│   └── screenshots/          # Capturas utilizadas neste README
-├── public/                   # Favicon, manifesto e ficheiros estáticos
+│   └── screenshots/          # Screenshots used in this README
+├── public/                   # Favicon, manifest, and static files
 ├── src/
-│   ├── assets/               # Fotografias dos fundos quente e frio
+│   ├── assets/               # Warm and cold background photos
 │   ├── components/
-│   │   └── WeatherCard.jsx   # Apresentação das condições atuais
+│   │   └── WeatherCard.jsx   # Current weather presentation
 │   ├── services/
-│   │   ├── weather.js        # Geocodificação e consulta meteorológica
-│   │   └── weather.test.js   # Testes do serviço
+│   │   ├── weather.js        # Geocoding and weather requests
+│   │   └── weather.test.js   # Service tests
 │   ├── test/
-│   │   └── fixtures.js       # Respostas de exemplo para os testes
+│   │   └── fixtures.js       # Sample responses for tests
 │   ├── utils/
-│   │   ├── weather.js        # Códigos meteorológicos, datas e horas
-│   │   └── weather.test.js   # Testes de formatação e condições
-│   ├── App.jsx               # Formulário e gestão da pesquisa
-│   ├── index.css             # Estilos globais e responsivos
-│   └── index.jsx             # Inicialização da aplicação React
+│   │   ├── weather.js        # Weather codes, dates, and times
+│   │   └── weather.test.js   # Formatting and condition tests
+│   ├── App.jsx               # Form and search management
+│   ├── index.css             # Global and responsive styles
+│   └── index.jsx             # React app entry point
 ├── eslint.config.js
 ├── index.html
 ├── package-lock.json
@@ -123,58 +123,58 @@ weatherApp/
 └── vite.config.js
 ```
 
-## Executar localmente
+## Run locally
 
-### Requisitos
+### Requirements
 
-- Node.js 18.18 ou superior; recomenda-se uma versão LTS mantida.
+- Node.js 18.18 or newer; a maintained LTS release is recommended.
 - npm.
-- Ligação à internet para consultar as APIs.
+- An internet connection to access the APIs.
 
-Na pasta do projeto, instalar as dependências e iniciar o servidor:
+From the project directory, install dependencies and start the server:
 
 ```sh
 npm ci
 npm start
 ```
 
-Abrir [http://localhost:3000](http://localhost:3000). A porta 3000 deve estar disponível. As alterações ao código são refletidas automaticamente durante o desenvolvimento. Para parar o servidor, usar `Ctrl+C` no terminal.
+Open [http://localhost:3000](http://localhost:3000). Port 3000 must be available. Code changes are reflected automatically during development. To stop the server, press `Ctrl+C` in the terminal.
 
-Não é necessário criar um ficheiro `.env` nem configurar uma chave de API.
+No `.env` file or API key is required.
 
-### Comandos disponíveis
+### Available commands
 
-| Comando | Descrição |
+| Command | Description |
 | --- | --- |
-| `npm start` | Inicia o servidor de desenvolvimento na porta 3000 |
-| `npm run dev` | Executa o mesmo comando de `npm start` |
-| `npm run lint` | Verifica JavaScript e regras de React Hooks |
-| `npm test` | Executa todos os testes automatizados |
-| `npm run test:watch` | Repete os testes quando os ficheiros são alterados |
-| `npm run build` | Gera a versão de produção em `dist/` |
-| `npm run preview` | Serve o build de produção localmente |
+| `npm start` | Start the development server on port 3000 |
+| `npm run dev` | Run the same command as `npm start` |
+| `npm run lint` | Check JavaScript and React Hooks rules |
+| `npm test` | Run all automated tests |
+| `npm run test:watch` | Rerun tests when files change |
+| `npm run build` | Generate the production build in `dist/` |
+| `npm run preview` | Serve the production build locally |
 
-Para verificar a versão de produção:
+To check the production build:
 
 ```sh
 npm run build
 npm run preview
 ```
 
-Abrir o endereço apresentado no terminal pelo Vite.
+Open the address printed by Vite in the terminal.
 
-## Testes
+## Tests
 
-Os 10 testes automatizados utilizam respostas simuladas das APIs, sem depender de uma ligação à internet ou das condições meteorológicas do momento.
+The 10 automated tests use simulated API responses and do not depend on an internet connection or current weather conditions.
 
-| Área | Casos cobertos |
+| Area | Coverage |
 | --- | --- |
-| Serviço meteorológico | Codificação da pesquisa, unidades métricas, normalização dos dados e passagem do sinal de cancelamento |
-| Validação | Pesquisa demasiado curta e cidade sem resultados |
-| Erros externos | Falhas HTTP, falhas de rede, JSON inválido e dados meteorológicos incompletos |
-| Cancelamento | Preservação de `AbortError` |
-| Apresentação | Datas e horas em diferentes fusos horários, incluindo mudança de dia |
-| Condições | Descrição de códigos meteorológicos e alternativa para códigos desconhecidos |
+| Weather service | Query encoding, metric units, data normalization, and cancellation signal forwarding |
+| Validation | Queries that are too short and cities with no results |
+| External errors | HTTP failures, network failures, invalid JSON, and incomplete weather data |
+| Cancellation | Preservation of `AbortError` |
+| Presentation | Dates and times in different timezones, including day boundaries |
+| Conditions | Weather-code descriptions and a fallback for unknown codes |
 
 ```sh
 npm test
@@ -182,11 +182,11 @@ npm run lint
 npm run build
 ```
 
-## Âmbito e fontes de dados
+## Scope and data sources
 
-A aplicação apresenta condições atuais e utiliza o primeiro resultado da pesquisa por cidade. A interface e as descrições meteorológicas estão em inglês. Os dados são atualizados quando é submetida uma pesquisa; não existe atualização automática periódica, previsão para vários dias, backend ou cache para utilização offline.
+The app displays current conditions and uses the first city search result. The interface and weather descriptions are in English. Data is refreshed when a search is submitted; there is no periodic automatic refresh, multi-day forecast, backend, or offline cache.
 
-- [Open-Meteo Geocoding API](https://open-meteo.com/en/docs/geocoding-api): pesquisa de localizações.
-- [Open-Meteo Forecast API](https://open-meteo.com/en/docs): condições meteorológicas.
-- [GeoNames](https://www.geonames.org/): fonte dos dados de localização.
-- [Termos da Open-Meteo](https://open-meteo.com/en/terms): condições de utilização do serviço.
+- [Open-Meteo Geocoding API](https://open-meteo.com/en/docs/geocoding-api): location search.
+- [Open-Meteo Forecast API](https://open-meteo.com/en/docs): weather conditions.
+- [GeoNames](https://www.geonames.org/): source of location data.
+- [Open-Meteo terms](https://open-meteo.com/en/terms): terms of service.
